@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -15,6 +16,11 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+
+import java.text.DecimalFormat;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -34,6 +40,16 @@ public class Robot extends TimedRobot {
   Encoder encoderL;
   Encoder encoderR;
   ADXRS450_Gyro gyro;
+  DecimalFormat formater = new DecimalFormat("00.00");
+String gyro_Angle;
+String encoder_rate_l;
+String encoder_rate_r;
+Accelerometer ac;
+String x_ac;
+String y_ac;
+String z_ac;
+double prevXAccel = 0;
+double prevYAccel = 0;
 
   @Override
   public void robotInit() {
@@ -48,12 +64,13 @@ public class Robot extends TimedRobot {
     encoderR.setDistancePerPulse(4./256.);
     encoderL.setDistancePerPulse(4./256.);
     gyro = new ADXRS450_Gyro();
+    ac = new BuiltInAccelerometer();
 
     m_Stick = new Joystick(0);
     LFmotor.setInverted(false);
 
   }
-  public void @Override
+  @Override
   public void teleopInit() {
     // TODO Auto-generated method stub
     super.teleopInit();
@@ -64,6 +81,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    double yAccel = ac.getY();
+    double yJerk = (yAccel - prevYAccel)/.02;
+    prevYAccel = yAccel;
+
    // m_myRobot.tankDrive(-0.7*m_Stick.getRawAxis(1), 0.7*m_Stick.getRawAxis(3));
    LFmotor.set(ControlMode.PercentOutput,m_Stick.getRawAxis(3) );
    LMmotor.set(ControlMode.PercentOutput,m_Stick.getRawAxis(3) );
@@ -71,6 +92,12 @@ public class Robot extends TimedRobot {
    RFmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
    RMmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
    RRmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
-    System.out.println("Left Rate: " + encoderL.getRate()+ " Right Rate: "+ encoderR.getRate()+" Gyro Angle: "+ gyro.getAngle());
+   gyro_Angle = formater.format(gyro.getAngle());
+   encoder_rate_l = formater.format(encoderR.getRate());
+   encoder_rate_r = formater.format(encoderL.getRate());
+   x_ac = formater.format(ac.getX());
+   y_ac = formater.format(yJerk);
+   z_ac = formater.format(ac.getZ());
+   System.out.println("Left Rate: " + encoder_rate_l+ " Right Rate: "+ encoder_rate_r+" Gyro Angle: "+ gyro_Angle+"            "+y_ac);
   }
 }
