@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -29,7 +31,9 @@ public class Robot extends TimedRobot {
   VictorSPX RFmotor;
   VictorSPX RMmotor;
   VictorSPX RRmotor;
-
+  Encoder encoderL;
+  Encoder encoderR;
+  ADXRS450_Gyro gyro;
 
   @Override
   public void robotInit() {
@@ -39,10 +43,23 @@ public class Robot extends TimedRobot {
     RFmotor = new VictorSPX(3);
     RMmotor = new VictorSPX(4);
     RRmotor = new VictorSPX(5);
+    encoderL = new Encoder(2, 3, false, Encoder.EncodingType.k2X);
+    encoderR = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
+    encoderR.setDistancePerPulse(4./256.);
+    encoderL.setDistancePerPulse(4./256.);
+    gyro = new ADXRS450_Gyro();
 
     m_Stick = new Joystick(0);
     LFmotor.setInverted(false);
-    
+
+  }
+  public void @Override
+  public void teleopInit() {
+    // TODO Auto-generated method stub
+    super.teleopInit();
+    encoderR.reset();
+    encoderL.reset();
+    gyro.reset();
   }
 
   @Override
@@ -54,6 +71,6 @@ public class Robot extends TimedRobot {
    RFmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
    RMmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
    RRmotor.set(ControlMode.PercentOutput,-m_Stick.getRawAxis(1) );
-
+    System.out.println("Left Rate: " + encoderL.getRate()+ " Right Rate: "+ encoderR.getRate()+" Gyro Angle: "+ gyro.getAngle());
   }
 }
