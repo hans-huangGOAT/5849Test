@@ -11,12 +11,9 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
 import java.text.DecimalFormat;
@@ -50,6 +47,7 @@ String y_ac;
 String z_ac;
 double prevXAccel = 0;
 double prevYAccel = 0;
+SpeedControllerGroup a;
 
   @Override
   public void robotInit() {
@@ -59,6 +57,7 @@ double prevYAccel = 0;
     RFmotor = new VictorSPX(3);
     RMmotor = new VictorSPX(4);
     RRmotor = new VictorSPX(5);
+
     encoderL = new Encoder(2, 3, false, Encoder.EncodingType.k2X);
     encoderR = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
     encoderR.setDistancePerPulse(4./256.);
